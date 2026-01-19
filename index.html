@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="am">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>መውዳ ትምህርት ቤት - የምግብ ስርዓተ-እንሽርሽሪት</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --cyber-cyan: #00f2ff;
+        --cyber-magenta: #ff00ff;
+        --cyber-bg: #050510;
+      }
+      body {
+        font-family: "Noto Sans Ethiopic", sans-serif;
+        background-color: var(--cyber-bg);
+        color: #e2e8f0;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      .cyber-grid {
+        background-image: linear-gradient(
+            rgba(0, 242, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
+      .hologram-card {
+        background: rgba(10, 20, 40, 0.6);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.05);
+      }
+      .neon-text-cyan {
+        text-shadow: 0 0 10px rgba(0, 242, 255, 0.8);
+        color: var(--cyber-cyan);
+      }
+      .neon-text-magenta {
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+        color: var(--cyber-magenta);
+      }
+
+      .scan-line {
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--cyber-cyan),
+          transparent
+        );
+        width: 100%;
+        position: absolute;
+        animation: scan 4s infinite linear;
+        z-index: 10;
+      }
+      @keyframes scan {
+        0% {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+      }
+      .glow-button {
+        transition: all 0.3s;
+        border: 1px solid rgba(0, 242, 255, 0.3);
+      }
+      .glow-button:hover {
+        background: var(--cyber-cyan);
+        color: #000;
+        box-shadow: 0 0 30px var(--cyber-cyan);
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      .animate-float {
+        animation: float 4s infinite ease-in-out;
+      }
+
+      table {
+        border-collapse: separate;
+        border-spacing: 0 8px;
+      }
+
+      .digestive-img-container {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        border-radius: 2rem;
+        padding: 2rem;
+        box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.05);
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body class="cyber-grid min-h-screen">
+    <div id="root"></div>
+
+    <script type="module">
+      import React, { useState } from "https://esm.sh/react@19.2.3";
+      import ReactDOM from "https://esm.sh/react-dom@19.2.3/client";
+      import {
+        Home,
+        Cpu,
+        CheckSquare,
+        ArrowLeft,
+        Sparkles,
+        Activity,
+        Shield,
+        Play,
+        Terminal,
+        Zap,
+        Globe,
+        Clock,
+        Brain,
+        BookOpen,
+        Search,
+        Info,
+        Layout,
+        Image as ImageIcon,
+      } from "https://esm.sh/lucide-react@0.475.0";
+
+      const DIGESTION_TYPES = [
+        {
+          title: "ፊዚካላዊ መፈጨት (Physical Digestion)",
+          desc: 'ምግብን በጥርሳችን በማድቀቅና በጨጓራ ግፊት ወደ ትናንሽ ክፍሎች የመስበር ሂደት ነው። ጥርስ ምግብን ይፈጫል፤ ምላስ ደግሞ ምግቡ "የኳስ ቅርጽ" (bolus) እንዲይዝ ያደርጋል።',
+        },
+        {
+          title: "ኬሚካላዊ መፈጨት (Chemical Digestion)",
+          desc: "ኢንዛይሞችና አሲዶችን በመጠቀም ምግብን ወደ ንጥረ ነገሮች የመቀየር ሂደት ነው። ለምሳሌ በአፍ ውስጥ ስታርች በቲያሊን (Ptyalin) አማካኝነት መፈጨት ይጀምራል።",
+        },
+      ];
+
+      const ORGANS = {
+        mouth: {
+          name: "አፍ",
+          english: "Mouth",
+          color: "#00f2ff",
+          icon: "👄",
+          description:
+            'የምግብ መፈጨት ሂደት በአፍ ውስጥ ይጀምራል። ጥርሳችን ምግብን ያደቃል፤ ምራቅ ደግሞ ምግብን ያለሰልሳል። ምላስ ምግቡ "የኳስ ቅርጽ" እንዲኖረው ያደርጋል።',
+          facts: [
+            "10,000 የሚሆኑ ጣዕም መለያዎች አሉት",
+            "ቲያሊን (Ptyalin) ኢንዛይም ስታርችን ይሰብራል",
+            "ጥርሶች ምግብን ይፈጫሉ",
+          ],
+          summary:
+            "የምግብ መፈጨት ሂደት የሚጀምርበት ክፍል ነው። ጥርሶች ምግብን በመፍጨት (ፊዚካላዊ)፣ ምራቅ ደግሞ በኢንዛይም (ኬሚካላዊ) መፈጨትን ይጀምራሉ።",
+          enzymes: [
+            { name: "ቲያሊን (Ptyalin)", func: "ስታርችን ወደ ማልቶስ (ቀላል ስኳር) ይለውጣል።" },
+          ],
+        },
+        throat: {
+          name: "ጉሮሮ",
+          english: "Throat/Pharynx",
+          color: "#fcd34d",
+          icon: "👅",
+          description: "አፍንና የምግብ ባንቧን የሚያገናኝ ክፍል ነው።",
+          facts: ["ምግብን ከኢሶፋገስ (የምግብ ባንቧ) ጋር ያገናኛል", "መተላለፊያ ክፍል ነው"],
+          summary: "አፍንና የምግብ ባንቧን የሚያገናኝ የጋራ መተላለፊያ ነው።",
+        },
+        esophagus: {
+          name: "ኤሶፋገስ",
+          english: "Esophagus",
+          color: "#f59e0b",
+          icon: "🦒",
+          description:
+            "ጉሮሮንና ጨጓራን የሚያገናኝ ባንቧ ነው። በውስጡ ምንም ዓይነት የምግብ መፈጨት አይካሄድም። ምግብን በጡንቻዎች መኮማተርና መዘርጋት (ፔሪስታልሲስ) ግፊት ወደ ጨጓራ ይገፋል።",
+          facts: ["ርዝመቱ 25 ሴ.ሜ ነው", "ሙከስ (Mucus) ምግብን ያሸራትታል", "መተላለፊያ ባንቧ ነው"],
+          summary: "ምግብን ከጉሮሮ ወደ ጨጓራ የሚያስተላልፍ የጡንቻ ባንቧ ነው።",
+        },
+        stomach: {
+          name: "ጨጓራ",
+          english: "Stomach",
+          color: "#10b981",
+          icon: "🥣",
+          description:
+            'ከረጢት የመሰለ ክፍል ነው። ምግብ እዚህ ከ4-6 ሰዓታት ይቆያል። አሲድና ኢንዛይሞችን በመጠቀም ምግብን ወደ "ካይም" (Chyme) የተባለ ፈሳሽ ይቀይራል።',
+          facts: [
+            "ፔፕሲን (Pepsin) ፕሮቲን ይፈጫል",
+            "ሬኒን (Renin) ወተት ያረጋል",
+            "ሃይድሮክሎሪክ አሲድ ባክቴሪያ ይገድላል",
+          ],
+          summary:
+            'ምግብ የሚከማችበትና በኬሚካል የሚፈጭበት ዋና ክፍል ነው። ምግቡ "ካይም" (Chyme) ወደሚባል ፈሳሽነት ይለወጣል።',
+          enzymes: [
+            { name: "ፔፕሲን (Pepsin)", func: "ፕሮቲኖችን ይሰብራል።" },
+            { name: "ሬኒን (Renin)", func: "የወተት ፕሮቲንን ያረጋል።" },
+          ],
+        },
+        liver: {
+          name: "ጉበት",
+          english: "Liver",
+          color: "#8b5cf6",
+          icon: "🧪",
+          description:
+            "ጉበት ሐሞትን (Bile) ያመነጫል። ሐሞት በሐሞት ከረጢት ውስጥ ተከማችቶ ወደ ቀጭን አንጀት ይለቀቃል።",
+          facts: ["ሐሞት (Bile) ያመርታል", "ስብን ለመፍጨት ያዘጋጃል", "መርዝ ያጣራል"],
+          summary:
+            "ሐሞትን የሚያመርት ትልቅ እጢ ነው። ሐሞት ስብን ለኢንዛይሞች እንዲመች (emulsification) ያደርጋል።",
+        },
+        pancreas: {
+          name: "ጣፊያ",
+          english: "Pancreas",
+          color: "#ef4444",
+          icon: "🧬",
+          description:
+            "የምግብ መፈጨት ፈሳሾችን ያመነጫል። እነዚህ ፈሳሾች ካርቦሃይድሬትን፣ ስብንና ፕሮቲንን ለመፍጨት የሚረዱ ኢንዛይሞችን ይዘዋል።",
+          facts: ["ኢንዛይሞችን ወደ ቀጭን አንጀት ይልካል", "ስኳርን ለመቆጣጠር ይረዳል"],
+          summary: "ለካርቦሃይድሬት፣ ለስብና ለፕሮቲን መፈጨት አስፈላጊ የሆኑ ኢንዛይሞችን ያመነጫል።",
+        },
+        small_intestine: {
+          name: "ቀጭን አንጀት",
+          english: "Small Intestine",
+          color: "#ec4899",
+          icon: "➰",
+          description:
+            "ርዝመቱ 6 ሜትር የሚደርስ ጠባብ ባንቧ ነው። አብዛኛው የምግብ መፈጨትና ንጥረ ነገሮችን ወደ ደም የመምጠጥ ሂደት እዚህ ይከናወናል።",
+          facts: [
+            "ንጥረ ነገሮች ወደ ደም የሚገቡት እዚህ ነው",
+            "መፈጨት እዚህ ይጠናቀቃል",
+            "ቪሊ (Villi) የተባሉ ክፍሎች አሉት",
+          ],
+          summary: "ምግብ መፈጨት የሚጠናቀቅበትና ጠቃሚ ንጥረ ነገሮች ወደ ደም የሚገቡበት ረጅሙ ክፍል ነው።",
+        },
+        large_intestine: {
+          name: "ትልቅ አንጀት",
+          english: "Large Intestine",
+          color: "#3b82f6",
+          icon: "🧻",
+          description:
+            "አጭርና ወፍራም ባንቧ ነው። ያልተፈጨው ምግብ ውሃ እንዲወሰድበትና ቆሻሻ ሆኖ እንዲወገድ ያደርጋል።",
+          facts: [
+            "ውሃን ይመጥባል",
+            "ቆሻሻን ያከማቻል",
+            "የቋጠ-ሰገራ (Rectum) እና ፊንጢጣን (Anus) ያካትታል",
+          ],
+          summary: "ውሃን በመምጠጥና አላስፈላጊ የምግብ ቅሪቶችን ለውገዳ የሚያዘጋጅ ክፍል ነው።",
+        },
+      };
+
+      const MASTER_ENZYMES = [
+        {
+          organ: "አፍ",
+          enzyme: "ቲያሊን (Ptyalin)",
+          action: "ስታርችን ወደ ማልቶስ (ቀላል ስኳር) ይለውጣል።",
+        },
+        {
+          organ: "ጨጓራ",
+          enzyme: "ፔፕሲን (Pepsin)",
+          action: "ፕሮቲኖችን ወደ አሚኖ አሲድ ይሰብራል።",
+        },
+        {
+          organ: "ጨጓራ",
+          enzyme: "ሬኒን (Renin)",
+          action: "የወተትን ፕሮቲን ያረጋል።",
+        },
+        {
+          organ: "ጉበት",
+          enzyme: "ሐሞት (Bile)",
+          action: "ስብን ለኢንዛይሞች ዝግጁ ያደርጋል። (ኢንዛይም አይደለም)",
+        },
+        {
+          organ: "ጣፊያ",
+          enzyme: "ጣፊያ ፈሳሽ",
+          action: "ካርቦሃይድሬትን፣ ስብንና ፕሮቲንን የሚፈጩ ኢንዛይሞችን ይዟል።",
+        },
+        { organ: "ቀጭን አንጀት", enzyme: "የአንጀት ፈሳሽ", action: "ምግብ መፈጨትን ያጠናቅቃል።" },
+      ];
+
+      const BIO_QUIZ = [
+        {
+          q: "የአንድ አዋቂ ሰው የምግብ ስርዓተ-እንሽርሽሪት ባንቧ እስከ ስንት ሜትር ሊረዝም ይችላል?",
+          type: "mcq",
+          options: ["5 ሜትር", "7 ሜትር", "9 ሜትር", "12 ሜትር"],
+          correct: 2,
+        },
+        {
+          q: "ምራቅ ውስጥ የሚገኘው ኢንዛይም ስም ማን ይባላል?",
+          type: "mcq",
+          options: ["ፔፕሲን", "ሬኒን", "ቲያሊን", "ላይፔዝ"],
+          correct: 2,
+        },
+        {
+          q: "ምላስ ምግብን ምን አይነት ቅርጽ እንዲይዝ ይረዳል?",
+          type: "mcq",
+          options: ["ካሬ ቅርጽ", "የኳስ ቅርጽ", "ቀጭን ቅርጽ", "የሶስት ማዕዘን ቅርጽ"],
+          correct: 1,
+        },
+        {
+          q: "በምግብ ባንቧ ውስጥ የምግብ መፈጨት ይካሄዳል?",
+          type: "mcq",
+          options: ["አዎ", "አይካሄድም", "ለጥቂት ሰከንድ", "በከፊል"],
+          correct: 1,
+        },
+        {
+          q: "ምግብ በጨጓራ ውስጥ ለስንት ሰዓት ሊቆይ ይችላል?",
+          type: "mcq",
+          options: ["ከ1-2 ሰዓት", "ከ4-6 ሰዓት", "ከ10-12 ሰዓት", "24 ሰዓት"],
+          correct: 1,
+        },
+        {
+          q: "ጨጓራ ውስጥ ፕሮቲንን የሚፈጨው ኢንዛይም?",
+          type: "mcq",
+          options: ["ቲያሊን", "ሬኒን", "ፔፕሲን", "ሐሞት"],
+          correct: 2,
+        },
+        {
+          q: "ሐሞትን (Bile) የሚያመነጨው የትኛው ነው?",
+          type: "mcq",
+          options: ["ጣፊያ", "ጨጓራ", "ጉበት", "አንጀት"],
+          correct: 2,
+        },
+        {
+          q: 'መፈጨት የጨረሰ ምግብ "ንጥረ ነገር" ሆኖ ወደ ደም የሚገባው የት ነው?',
+          type: "mcq",
+          options: ["አፍ", "ጨጓራ", "ቀጭን አንጀት", "ትልቅ አንጀት"],
+          correct: 2,
+        },
+        {
+          q: "ውሃን ከምግብ ቅሪት ውስጥ የሚመጥው የትኛው ነው?",
+          type: "mcq",
+          options: ["ቀጭን አንጀት", "ትልቅ አንጀት", "ጣፊያ", "ጉበት"],
+          correct: 1,
+        },
+        {
+          q: "ወተትን የሚያረጋው የጨጓራ ኢንዛይም ማን ይባላል?",
+          type: "mcq",
+          options: ["ፔፕሲን", "ሬኒን", "ቲያሊን", "አሚሌዝ"],
+          correct: 1,
+        },
+        { q: "የምግብ መፈጨት ሂደት ____ ውስጥ ይጀምራል።", type: "fill", answer: "አፍ" },
+        {
+          q: "በአፋችን ውስጥ የሚገኘው ____ ምግብን ለማለስለስና ለኬሚካላዊ መፈጨት ይረዳል።",
+          type: "fill",
+          answer: "ምራቅ",
+        },
+        {
+          q: "ምግብ ከጉሮሮ ወደ ጨጓራ የሚሄድበት ባንቧ ____ ይባላል።",
+          type: "fill",
+          answer: "የምግብ ባንቧ",
+        },
+        {
+          q: "ጨጓራ ውስጥ ምግብ ተፈጭቶ የሚፈጠረው ፈሳሽ ____ ይባላል።",
+          type: "fill",
+          answer: "ካይም",
+        },
+        {
+          q: "____ ስብን ለመፍጨት የሚረዳና በጉበት የሚመረት ፈሳሽ ነው።",
+          type: "fill",
+          answer: "ሐሞት",
+        },
+        {
+          q: "ንጥረ ነገሮች ወደ ደም የሚገቡበት ረጅሙ ክፍል ____ አንጀት ነው።",
+          type: "fill",
+          answer: "ቀጭን",
+        },
+        {
+          q: "ያልተፈጨ ምግብ ቆሻሻ ሆኖ የሚወገደው በ____ በኩል ነው።",
+          type: "fill",
+          answer: "ፊንጢጣ",
+        },
+        {
+          q: "ምግብን በባንቧ ውስጥ ለመግፋት ጡንቻዎች የሚጠቀሙት ግፊት ____ ይባላል።",
+          type: "fill",
+          answer: "ፔሪስታልሲስ",
+        },
+        {
+          q: "____ የጣዕም መለያ ህዋሳት (taste buds) አሉት።",
+          type: "fill",
+          answer: "ምላስ",
+        },
+        {
+          q: "ካርቦሃይድሬትን፣ ስብንና ፕሮቲንን የሚፈጩ ኢንዛይሞችን የሚያመነጨው እጢ ____ ይባላል።",
+          type: "fill",
+          answer: "ጣፊያ",
+        },
+        {
+          q: "የምግብ ባንቧ ውስጥ የምግብ መፈጨት ሂደት ይከናወናል።",
+          type: "tf",
+          correct: "False",
+        },
+        { q: "ትልቅ አንጀት ከቀጭን አንጀት ይወፍራል።", type: "tf", correct: "True" },
+        { q: "ሐሞት (Bile) ኢንዛይም ነው።", type: "tf", correct: "False" },
+        { q: "ቲያሊን ስታርችን ለመፍጨት ይረዳል።", type: "tf", correct: "True" },
+        { q: "መፈጨት መጨረሻ ላይ ንጥረ ነገሮች ወደ ደም ይገባሉ።", type: "tf", correct: "True" },
+      ];
+
+      const LearningApp = () => {
+        const [module, setModule] = useState("hub");
+        const [view, setView] = useState("home");
+        const [selectedId, setSelectedId] = useState(null);
+        const [quizIdx, setQuizIdx] = useState(0);
+        const [score, setScore] = useState(0);
+        const [ansStatus, setAnsStatus] = useState(null);
+        const [userInput, setUserInput] = useState("");
+
+        const handleAnswer = (val) => {
+          if (ansStatus !== null) return;
+          const currentQ = BIO_QUIZ[quizIdx];
+          let isCorrect = false;
+
+          if (currentQ.type === "mcq") isCorrect = val === currentQ.correct;
+          else if (currentQ.type === "fill")
+            isCorrect = val.trim() === currentQ.answer;
+          else if (currentQ.type === "tf") isCorrect = val === currentQ.correct;
+
+          setAnsStatus(isCorrect ? "correct" : "wrong");
+          if (isCorrect) setScore(score + 1);
+
+          setTimeout(() => {
+            if (quizIdx < BIO_QUIZ.length - 1) {
+              setQuizIdx(quizIdx + 1);
+              setAnsStatus(null);
+              setUserInput("");
+            } else setView("result");
+          }, 1500);
+        };
+
+        const resetView = (newView, newModule = module) => {
+          setView(newView);
+          setModule(newModule);
+          setQuizIdx(0);
+          setScore(0);
+          setAnsStatus(null);
+          setUserInput("");
+        };
+
+        if (module === "hub") {
+          return React.createElement(
+            "div",
+            {
+              className:
+                "min-h-screen flex flex-col items-center justify-center p-6 text-center",
+            },
+            React.createElement(
+              "div",
+              { className: "mb-12 animate-float" },
+              React.createElement(
+                "h1",
+                {
+                  className: "text-5xl md:text-7xl font-black text-white mb-6",
+                },
+                "መወዳ ትምህርት ቤት"
+              ),
+              React.createElement(
+                "p",
+                {
+                  className: "text-slate-400 max-w-lg mx-auto leading-relaxed",
+                },
+                "ሁለገብ የቴክኖሎጂ መማሪያ ስርዓት። በኢትዮጵያ ስርዓተ-ትምህርት ላይ ተመስርቶ የቀረበ።"
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "grid md:grid-cols-2 gap-8 w-full max-w-4xl" },
+              React.createElement(
+                "button",
+                {
+                  onClick: () => resetView("home", "bio"),
+                  className:
+                    "hologram-card p-10 rounded-[3rem] border-cyan-500/30 group hover:border-cyan-400 transition-all hover:-translate-y-2",
+                },
+                React.createElement(
+                  "div",
+                  {
+                    className:
+                      "w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-cyan-500 group-hover:text-black transition-all",
+                  },
+                  React.createElement(Activity, { size: 40 })
+                ),
+                React.createElement(
+                  "h2",
+                  { className: "text-2xl font-black text-white mb-2" },
+                  "የምግብ ስርዓተ-እንሽርሽሪት"
+                ),
+                React.createElement(
+                  "p",
+                  { className: "text-slate-400 text-sm" },
+                  "የሰውነታችንን ዋና ዋና ክፍሎችና ተግባራቸውን ይወቁ።"
+                )
+              ),
+              React.createElement(
+                "button",
+                {
+                  onClick: () => resetView("home", "tense"),
+                  className:
+                    "hologram-card p-10 rounded-[3rem] border-magenta-500/30 group hover:border-magenta-400 transition-all hover:-translate-y-2",
+                },
+                React.createElement(
+                  "div",
+                  {
+                    className:
+                      "w-20 h-20 bg-magenta-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-magenta-500 group-hover:text-white transition-all",
+                  },
+                  React.createElement(Clock, { size: 40 })
+                ),
+                React.createElement(
+                  "h2",
+                  { className: "text-2xl font-black text-white mb-2" },
+                  "የእንግሊዝኛ ጊዜያት"
+                ),
+                React.createElement(
+                  "p",
+                  { className: "text-slate-400 text-sm" },
+                  "12ቱን የእንግሊዝኛ ጊዜያት በቀላል ምሳሌዎች ይማሩ።"
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              {
+                className:
+                  "mt-16 text-[12px] text-slate-500 font-mono font-bold tracking-[0.3em] uppercase",
+              },
+              "Developed by AK and Daniya Nuredin"
+            )
+          );
+        }
+
+        if (module === "bio") {
+          if (view === "home") {
+            return React.createElement(
+              "div",
+              { className: "min-h-screen p-6 max-w-7xl mx-auto" },
+              React.createElement(
+                "button",
+                {
+                  onClick: () => setModule("hub"),
+                  className:
+                    "mb-8 text-cyan-400 flex items-center gap-2 font-bold hover:underline",
+                },
+                React.createElement(ArrowLeft, { size: 18 }),
+                "ወደ ዋናው ማውጫ ተመለስ"
+              ),
+              React.createElement(
+                "div",
+                { className: "grid lg:grid-cols-12 gap-8" },
+                React.createElement(
+                  "div",
+                  { className: "lg:col-span-7 flex flex-col gap-6" },
+                  React.createElement(
+                    "div",
+                    {
+                      className:
+                        "hologram-card p-8 rounded-3xl border-l-8 border-cyan-500",
+                    },
+                    React.createElement(
+                      "h3",
+                      {
+                        className:
+                          "text-xl font-black text-cyan-400 mb-4 uppercase tracking-wider",
+                      },
+                      "የመፈጨት ዓይነቶች"
+                    ),
+                    React.createElement(
+                      "div",
+                      { className: "grid gap-4" },
+                      DIGESTION_TYPES.map((t, idx) =>
+                        React.createElement(
+                          "div",
+                          {
+                            key: idx,
+                            className:
+                              "bg-white/5 p-4 rounded-xl border border-white/5",
+                          },
+                          React.createElement(
+                            "div",
+                            { className: "font-bold text-white text-lg" },
+                            t.title
+                          ),
+                          React.createElement(
+                            "div",
+                            { className: "text-slate-400 text-sm mt-1" },
+                            t.desc
+                          )
+                        )
+                      )
+                    )
+                  ),
+                  React.createElement(
+                    "div",
+                    {
+                      className:
+                        "hologram-card rounded-[3rem] p-10 relative overflow-hidden flex justify-center",
+                    },
+                    React.createElement("div", { className: "scan-line" }),
+                    React.createElement(
+                      "svg",
+                      {
+                        viewBox: "0 0 400 600",
+                        className: "w-full max-w-[400px] h-auto opacity-90",
+                      },
+                      React.createElement("ellipse", {
+                        cx: 200,
+                        cy: 300,
+                        rx: 140,
+                        ry: 280,
+                        fill: "rgba(0, 242, 255, 0.05)",
+                        stroke: "rgba(0, 242, 255, 0.2)",
+                        strokeWidth: 2,
+                      }),
+                      Object.entries(ORGANS).map(([id, org]) => {
+                        if (id === "mouth")
+                          return React.createElement("circle", {
+                            key: id,
+                            cx: 200,
+                            cy: 50,
+                            r: 25,
+                            fill: org.color,
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "throat")
+                          return React.createElement("circle", {
+                            key: id,
+                            cx: 200,
+                            cy: 90,
+                            r: 15,
+                            fill: org.color,
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "esophagus")
+                          return React.createElement("rect", {
+                            key: id,
+                            x: 195,
+                            y: 110,
+                            width: 10,
+                            height: 80,
+                            fill: org.color,
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "stomach")
+                          return React.createElement("ellipse", {
+                            key: id,
+                            cx: 180,
+                            cy: 230,
+                            rx: 45,
+                            ry: 35,
+                            fill: org.color,
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "liver")
+                          return React.createElement("path", {
+                            key: id,
+                            d: "M 130 200 Q 110 220 130 250 L 175 250 Q 185 240 175 200 Z",
+                            fill: org.color,
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "pancreas")
+                          return React.createElement("rect", {
+                            key: id,
+                            x: 180,
+                            y: 260,
+                            width: 60,
+                            height: 15,
+                            rx: 7,
+                            fill: org.color,
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "small_intestine")
+                          return React.createElement("path", {
+                            key: id,
+                            d: "M 175 290 Q 150 320 175 350 Q 200 380 175 410 Q 150 440 175 470",
+                            fill: "none",
+                            stroke: org.color,
+                            strokeWidth: 15,
+                            strokeLinecap: "round",
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                        if (id === "large_intestine")
+                          return React.createElement("path", {
+                            key: id,
+                            d: "M 230 480 Q 240 480 240 470 L 240 320 Q 240 300 220 300 L 160 300 Q 140 300 140 320 L 140 480",
+                            fill: "none",
+                            stroke: org.color,
+                            strokeWidth: 20,
+                            strokeLinecap: "round",
+                            className:
+                              "cursor-pointer hover:brightness-125 transition-all",
+                            onClick: () => {
+                              setSelectedId(id);
+                              setView("detail");
+                            },
+                          });
+                      })
+                    )
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { className: "lg:col-span-5 flex flex-col gap-3" },
+                  React.createElement(
+                    "h2",
+                    { className: "text-3xl font-black text-white mb-2" },
+                    "የስርዓቱ ክፍሎች"
+                  ),
+                  React.createElement(
+                    "div",
+                    { className: "grid gap-2" },
+                    Object.entries(ORGANS).map(([id, org]) =>
+                      React.createElement(
+                        "button",
+                        {
+                          key: id,
+                          onClick: () => {
+                            setSelectedId(id);
+                            setView("detail");
+                          },
+                          className:
+                            "hologram-card p-3 rounded-xl flex items-center gap-4 border-l-4 transition-all hover:scale-[1.02]",
+                          style: { borderLeftColor: org.color },
+                        },
+                        React.createElement(
+                          "span",
+                          { className: "text-xl" },
+                          org.icon
+                        ),
+                        React.createElement(
+                          "div",
+                          { className: "text-left" },
+                          React.createElement(
+                            "div",
+                            { className: "font-bold text-white text-sm" },
+                            org.name
+                          ),
+                          React.createElement(
+                            "div",
+                            {
+                              className:
+                                "text-[9px] text-slate-500 uppercase font-mono",
+                            },
+                            org.english
+                          )
+                        )
+                      )
+                    )
+                  ),
+                  React.createElement(
+                    "div",
+                    { className: "grid grid-cols-1 gap-3 mt-4" },
+                    React.createElement(
+                      "button",
+                      {
+                        onClick: () => setView("summary"),
+                        className:
+                          "hologram-card text-magenta-400 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 border-magenta-500/30 hover:border-magenta-500 transition-all shadow-lg",
+                      },
+                      React.createElement(Layout, { size: 24 }),
+                      "ማጠቃለያ (Summary)"
+                    ),
+                    React.createElement(
+                      "button",
+                      {
+                        onClick: () => setView("quiz"),
+                        className:
+                          "glow-button text-cyan-400 py-5 rounded-2xl font-black text-xl flex items-center justify-center gap-3",
+                      },
+                      React.createElement(CheckSquare, { size: 28 }),
+                      "ፈተናውን ጀምር (25 ጥያቄዎች)"
+                    )
+                  )
+                )
+              )
+            );
+          }
+
+          if (view === "summary") {
+            return React.createElement(
+              "div",
+              { className: "min-h-screen p-6 max-w-5xl mx-auto py-12" },
+              React.createElement(
+                "button",
+                {
+                  onClick: () => setView("home"),
+                  className:
+                    "mb-8 text-cyan-400 flex items-center gap-2 font-bold",
+                },
+                React.createElement(ArrowLeft, { size: 18 }),
+                "ወደ ዋናው ገጽ ተመለስ"
+              ),
+              React.createElement(
+                "div",
+                {
+                  className:
+                    "hologram-card rounded-[3rem] p-10 md:p-16 border-t-8 border-magenta-500 shadow-2xl relative overflow-hidden",
+                },
+                React.createElement(
+                  "h1",
+                  {
+                    className:
+                      "text-4xl md:text-5xl font-black text-white mb-8 flex items-center gap-4",
+                  },
+                  React.createElement(BookOpen, {
+                    size: 48,
+                    className: "text-magenta-400",
+                  }),
+                  "የምግብ ስርዓተ-እንሽርሽሪት ማጠቃለያ"
+                ),
+
+                // Image Section with requested snippet
+                // Image Section with Digestive System picture
+                // Image Section with Digestive System picture
+                React.createElement(
+                  "section",
+                  { className: "mb-12" },
+                  React.createElement(
+                    "h3",
+                    {
+                      className:
+                        "text-2xl font-bold text-cyan-400 mb-6 border-b border-cyan-500/30 pb-2 flex items-center gap-3",
+                    },
+                    React.createElement(ImageIcon, { size: 28 }),
+                    "የስርዓተ-እንሽርሽሪት ምስል (System Diagram)"
+                  ),
+                  React.createElement(
+                    "div",
+                    { className: "digestive-img-container" },
+                    React.createElement("img", {
+                      src: "./Images/DigestiveSystem.JPEG",
+                      alt: "Digestive System Diagram",
+                      className:
+                        "mx-auto mt-4 w-72 h-auto rounded-2xl shadow-lg border border-white/10",
+                    })
+                  )
+                ),
+
+                React.createElement(
+                  "div",
+                  { className: "space-y-12" },
+                  React.createElement(
+                    "section",
+                    null,
+                    React.createElement(
+                      "h3",
+                      {
+                        className:
+                          "text-2xl font-bold text-cyan-400 mb-6 border-b border-cyan-500/30 pb-2",
+                      },
+                      "የሂደቱ አጠቃላይ እይታ"
+                    ),
+                    React.createElement(
+                      "p",
+                      {
+                        className:
+                          "text-xl text-slate-300 leading-relaxed mb-6",
+                      },
+                      'የምግብ ስርዓተ-እንሽርሽሪት ባንቧ በአዋቂ ሰው እስከ 9 ሜትር ሊረዝም ይችላል። ሂደቱ በሁለት ይከፈላል፤ በጥርሳችንና በጡንቻዎቻችን የምንጠቀምበት "ፊዚካላዊ" እና ኢንዛይሞችን የምንጠቀምበት "ኬሚካላዊ" መፈጨት።'
+                    ),
+                    React.createElement(
+                      "div",
+                      { className: "grid md:grid-cols-2 gap-6" },
+                      React.createElement(
+                        "div",
+                        {
+                          className:
+                            "bg-white/5 p-6 rounded-2xl border border-white/5",
+                        },
+                        React.createElement(
+                          "h4",
+                          { className: "text-cyan-400 font-bold mb-3" },
+                          "ዋና ዋና ክፍሎች"
+                        ),
+                        React.createElement(
+                          "p",
+                          { className: "text-slate-400" },
+                          "አፍ፣ ጉሮሮ፣ የምግብ ባንቧ፣ ጨጓራ፣ ቀጭን አንጀት፣ ትልቅ አንጀት፣ ቀጥ-ሰገራ እና ፊንጢጣ።"
+                        )
+                      ),
+                      React.createElement(
+                        "div",
+                        {
+                          className:
+                            "bg-white/5 p-6 rounded-2xl border border-white/5",
+                        },
+                        React.createElement(
+                          "h4",
+                          { className: "text-cyan-400 font-bold mb-3" },
+                          "ረዳት እጢዎች"
+                        ),
+                        React.createElement(
+                          "p",
+                          { className: "text-slate-400" },
+                          "ምራቅ አመንጪ እጢዎች፣ ጉበት እና ጣፊያ።"
+                        )
+                      )
+                    )
+                  ),
+
+                  React.createElement(
+                    "section",
+                    null,
+                    React.createElement(
+                      "h3",
+                      {
+                        className:
+                          "text-2xl font-bold text-magenta-400 mb-6 border-b border-magenta-500/30 pb-2 flex items-center gap-3",
+                      },
+                      React.createElement(Brain, { size: 28 }),
+                      "የኢንዛይሞች ዋና ማጠቃለያ ሰንጠረዥ"
+                    ),
+                    React.createElement(
+                      "div",
+                      {
+                        className:
+                          "overflow-x-auto overflow-hidden rounded-2xl border border-white/10",
+                      },
+                      React.createElement(
+                        "table",
+                        { className: "w-full text-left" },
+                        React.createElement(
+                          "thead",
+                          null,
+                          React.createElement(
+                            "tr",
+                            { className: "bg-white/10" },
+                            React.createElement(
+                              "th",
+                              { className: "p-5 text-cyan-400 font-black" },
+                              "ክፍል (Organ)"
+                            ),
+                            React.createElement(
+                              "th",
+                              { className: "p-5 text-cyan-400 font-black" },
+                              "ኢንዛይም"
+                            ),
+                            React.createElement(
+                              "th",
+                              { className: "p-5 text-cyan-400 font-black" },
+                              "ተግባር (Function)"
+                            )
+                          )
+                        ),
+                        React.createElement(
+                          "tbody",
+                          null,
+                          MASTER_ENZYMES.map((e, idx) =>
+                            React.createElement(
+                              "tr",
+                              {
+                                key: idx,
+                                className:
+                                  "bg-white/5 hover:bg-white/10 transition-colors border-t border-white/5",
+                              },
+                              React.createElement(
+                                "td",
+                                { className: "p-5 text-white font-bold" },
+                                e.organ
+                              ),
+                              React.createElement(
+                                "td",
+                                {
+                                  className:
+                                    "p-5 text-magenta-400 font-mono font-bold",
+                                },
+                                e.enzyme
+                              ),
+                              React.createElement(
+                                "td",
+                                {
+                                  className:
+                                    "p-5 text-slate-400 text-sm italic",
+                                },
+                                e.action
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                ),
+
+                React.createElement(
+                  "div",
+                  {
+                    className:
+                      "mt-16 pt-8 border-t border-white/10 text-center",
+                  },
+                  React.createElement(
+                    "p",
+                    { className: "text-slate-500 text-sm italic" },
+                    "ማሳሰቢያ: ጉበት ሐሞትን (Bile) ቢያመርትም ሐሞት ራሱ ኢንዛይም ሳይሆን ስብን ለኢንዛይሞች እንዲመች የሚያደርግ ፈሳሽ ነው።"
+                  )
+                )
+              )
+            );
+          }
+
+          if (view === "detail") {
+            const org = ORGANS[selectedId];
+            return React.createElement(
+              "div",
+              {
+                className:
+                  "min-h-screen p-6 max-w-4xl mx-auto py-12 flex flex-col justify-center",
+              },
+              React.createElement(
+                "button",
+                {
+                  onClick: () => setView("home"),
+                  className:
+                    "mb-8 text-cyan-400 flex items-center gap-2 font-bold",
+                },
+                React.createElement(ArrowLeft, { size: 18 }),
+                "ወደ ዝርዝር ተመለስ"
+              ),
+              React.createElement(
+                "div",
+                {
+                  className:
+                    "hologram-card rounded-[3rem] p-10 border-l-8 shadow-2xl",
+                  style: { borderLeftColor: org.color },
+                },
+                React.createElement(
+                  "div",
+                  { className: "flex justify-between items-start mb-6" },
+                  React.createElement(
+                    "div",
+                    { className: "text-8xl" },
+                    org.icon
+                  ),
+                  React.createElement(
+                    "div",
+                    {
+                      className:
+                        "bg-cyan-500/10 p-4 rounded-2xl border border-cyan-500/20 shadow-inner",
+                    },
+                    React.createElement(Activity, {
+                      size: 40,
+                      className: "text-cyan-400",
+                    })
+                  )
+                ),
+                React.createElement(
+                  "h1",
+                  { className: "text-5xl font-black text-white mb-2" },
+                  org.name
+                ),
+                React.createElement(
+                  "p",
+                  {
+                    className:
+                      "text-cyan-400 uppercase tracking-widest text-xs mb-8 font-mono",
+                  },
+                  org.english
+                ),
+
+                React.createElement(
+                  "div",
+                  { className: "mb-8" },
+                  React.createElement(
+                    "h3",
+                    {
+                      className:
+                        "text-white text-xl font-bold mb-4 flex items-center gap-2",
+                    },
+                    React.createElement(Zap, {
+                      size: 20,
+                      className: "text-yellow-500",
+                    }),
+                    "መረጃ"
+                  ),
+                  React.createElement(
+                    "p",
+                    { className: "text-2xl text-slate-300 leading-relaxed" },
+                    org.description
+                  )
+                ),
+
+                React.createElement(
+                  "div",
+                  { className: "mb-8" },
+                  React.createElement(
+                    "h3",
+                    {
+                      className:
+                        "text-white text-xl font-bold mb-4 flex items-center gap-2",
+                    },
+                    React.createElement(Info, {
+                      size: 20,
+                      className: "text-cyan-400",
+                    }),
+                    "ማጠቃለያ"
+                  ),
+                  React.createElement(
+                    "div",
+                    {
+                      className:
+                        "bg-white/5 p-6 rounded-2xl border border-white/10 italic text-slate-400 text-lg",
+                    },
+                    org.summary
+                  )
+                ),
+
+                org.enzymes &&
+                  React.createElement(
+                    "div",
+                    { className: "mb-8" },
+                    React.createElement(
+                      "h3",
+                      {
+                        className:
+                          "text-white text-xl font-bold mb-4 flex items-center gap-2",
+                      },
+                      React.createElement(Brain, {
+                        size: 20,
+                        className: "text-magenta-400",
+                      }),
+                      "ኢንዛይሞች"
+                    ),
+                    React.createElement(
+                      "div",
+                      {
+                        className:
+                          "overflow-hidden rounded-2xl border border-white/10 shadow-lg",
+                      },
+                      React.createElement(
+                        "table",
+                        { className: "w-full text-left bg-black/20" },
+                        React.createElement(
+                          "thead",
+                          { className: "bg-white/10" },
+                          React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                              "th",
+                              { className: "p-4 text-cyan-400 font-bold" },
+                              "ስም"
+                            ),
+                            React.createElement(
+                              "th",
+                              { className: "p-4 text-cyan-400 font-bold" },
+                              "ተግባር"
+                            )
+                          )
+                        ),
+                        React.createElement(
+                          "tbody",
+                          null,
+                          org.enzymes.map((e, idx) =>
+                            React.createElement(
+                              "tr",
+                              {
+                                key: idx,
+                                className:
+                                  "border-t border-white/5 transition-colors hover:bg-white/5",
+                              },
+                              React.createElement(
+                                "td",
+                                { className: "p-4 text-white font-bold" },
+                                e.name
+                              ),
+                              React.createElement(
+                                "td",
+                                { className: "p-4 text-slate-400 text-sm" },
+                                e.func
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  ),
+
+                React.createElement(
+                  "div",
+                  { className: "space-y-4 border-t border-white/5 pt-6" },
+                  org.facts.map((f, i) =>
+                    React.createElement(
+                      "div",
+                      {
+                        key: i,
+                        className: "flex gap-3 text-slate-400 text-lg",
+                      },
+                      React.createElement(CheckSquare, {
+                        className: "text-cyan-500 shrink-0",
+                        size: 22,
+                      }),
+                      f
+                    )
+                  )
+                )
+              )
+            );
+          }
+
+          if (view === "quiz") {
+            const q = BIO_QUIZ[quizIdx];
+            return React.createElement(
+              "div",
+              {
+                className: "min-h-screen p-6 flex items-center justify-center",
+              },
+              React.createElement(
+                "div",
+                {
+                  className:
+                    "max-w-xl w-full hologram-card rounded-[2.5rem] p-10 border-cyan-500/20 shadow-2xl",
+                },
+                React.createElement(
+                  "div",
+                  { className: "flex justify-between items-center mb-6" },
+                  React.createElement(
+                    "span",
+                    { className: "text-cyan-400 font-black tracking-widest" },
+                    `ጥያቄ ${quizIdx + 1} / ${BIO_QUIZ.length}`
+                  ),
+                  React.createElement(
+                    "span",
+                    { className: "text-slate-500 font-mono text-xs uppercase" },
+                    q.type
+                  )
+                ),
+                React.createElement(
+                  "h2",
+                  {
+                    className:
+                      "text-2xl md:text-3xl font-bold text-white mb-10 border-l-4 border-cyan-500 pl-6 leading-relaxed",
+                  },
+                  q.q
+                ),
+
+                q.type === "mcq" &&
+                  React.createElement(
+                    "div",
+                    { className: "space-y-4" },
+                    q.options.map((opt, i) => {
+                      let s =
+                        "border-slate-800 text-slate-400 hover:border-cyan-500 hover:bg-white/5";
+                      if (ansStatus !== null) {
+                        if (i === q.correct)
+                          s =
+                            "border-green-500 bg-green-500/10 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.3)]";
+                        else if (ansStatus === "wrong" && i !== q.correct)
+                          s = "opacity-20";
+                      }
+                      return React.createElement(
+                        "button",
+                        {
+                          key: i,
+                          onClick: () => handleAnswer(i),
+                          className: `w-full p-5 rounded-2xl text-left font-bold border-2 transition-all duration-300 ${s}`,
+                        },
+                        opt
+                      );
+                    })
+                  ),
+
+                q.type === "fill" &&
+                  React.createElement(
+                    "div",
+                    { className: "space-y-6" },
+                    React.createElement("input", {
+                      type: "text",
+                      value: userInput,
+                      onChange: (e) => setUserInput(e.target.value),
+                      placeholder: "መልስዎን እዚህ ይጻፉ...",
+                      className:
+                        "w-full bg-black/50 border-2 border-slate-800 rounded-2xl p-6 text-white font-bold focus:border-cyan-500 outline-none shadow-inner transition-all",
+                    }),
+                    React.createElement(
+                      "button",
+                      {
+                        onClick: () => handleAnswer(userInput),
+                        className:
+                          "w-full glow-button py-5 rounded-2xl font-black text-lg shadow-lg",
+                      },
+                      "መልስ አረጋግጥ"
+                    )
+                  ),
+
+                q.type === "tf" &&
+                  React.createElement(
+                    "div",
+                    { className: "grid grid-cols-2 gap-4" },
+                    ["True", "False"].map((opt) =>
+                      React.createElement(
+                        "button",
+                        {
+                          key: opt,
+                          onClick: () => handleAnswer(opt),
+                          className: `p-8 rounded-3xl border-2 font-black text-xl transition-all ${
+                            opt === "True"
+                              ? "border-green-500/30 text-green-400 hover:bg-green-500/10"
+                              : "border-red-500/30 text-red-400 hover:bg-red-500/10"
+                          }`,
+                        },
+                        opt === "True" ? "እውነት" : "ሐሰት"
+                      )
+                    )
+                  ),
+
+                ansStatus &&
+                  React.createElement(
+                    "div",
+                    {
+                      className: `mt-8 p-6 rounded-2xl text-center font-bold text-xl animate-bounce ${
+                        ansStatus === "correct"
+                          ? "bg-green-500/10 text-green-400"
+                          : "bg-red-500/10 text-red-400"
+                      }`,
+                    },
+                    ansStatus === "correct"
+                      ? "ትክክል ነዎት! 🌟"
+                      : `ተሳስተዋል! ትክክለኛው መልስ: ${
+                          q.type === "mcq"
+                            ? q.options[q.correct]
+                            : q.type === "tf"
+                            ? q.correct === "True"
+                              ? "እውነት"
+                              : "ሐሰት"
+                            : q.answer
+                        }`
+                  )
+              )
+            );
+          }
+
+          if (view === "result") {
+            return React.createElement(
+              "div",
+              {
+                className: "min-h-screen flex items-center justify-center p-6",
+              },
+              React.createElement(
+                "div",
+                {
+                  className:
+                    "hologram-card p-16 rounded-[4rem] text-center border-b-8 border-cyan-500 max-w-lg w-full shadow-2xl",
+                },
+                React.createElement(
+                  "h2",
+                  {
+                    className:
+                      "text-4xl font-black mb-6 text-white uppercase tracking-widest",
+                  },
+                  "Mission Complete"
+                ),
+                React.createElement(
+                  "div",
+                  {
+                    className:
+                      "text-9xl font-black text-cyan-400 mb-8 drop-shadow-[0_0_20px_rgba(0,242,255,0.5)]",
+                  },
+                  `${score} / ${BIO_QUIZ.length}`
+                ),
+                React.createElement(
+                  "p",
+                  { className: "text-slate-400 mb-10 text-2xl font-bold" },
+                  score > 20
+                    ? "እጅግ በጣም ጎበዝ! 🚀"
+                    : "ጥሩ ነው! እንደገና በመሞከር ውጤትህን አሻሽል።"
+                ),
+                React.createElement(
+                  "button",
+                  {
+                    onClick: () => setView("home"),
+                    className:
+                      "glow-button px-10 py-5 rounded-3xl font-black w-full text-xl shadow-lg",
+                  },
+                  "ወደ መጀመሪያው ተመለስ"
+                )
+              )
+            );
+          }
+        }
+        return null;
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(React.createElement(LearningApp));
+    </script>
+  </body>
+</html>
